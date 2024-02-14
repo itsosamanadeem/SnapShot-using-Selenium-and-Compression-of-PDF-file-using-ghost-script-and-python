@@ -4,16 +4,16 @@ import tempfile
 from reportlab.lib.pagesizes import A4, letter
 from reportlab.pdfgen import canvas
 
-def capture_screenshot(view_type):
+def capture_screenshot(view_type,url,output_filename_forPDF):
     # Set user agent based on view_type
     if view_type == 1:  # Mobile view
         user_agent = "Mozilla/5.0 (iPhone; CPU iPhone OS 14_5 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/14.1 Mobile/15E148 Safari/604.1"
         window_width = 380
-        output_filename = "Mobile_view.png"
+        output_filename = f'{output_filename_forPDF}.png'
     elif view_type == 2:  # Desktop view
         user_agent = None
         window_width = 1920
-        output_filename = "Desktop_view.png"
+        output_filename = f'{output_filename_forPDF}.png'
     else:
         print("Invalid input.")
         return
@@ -28,7 +28,7 @@ def capture_screenshot(view_type):
     driver.maximize_window()
 
     # Navigate to the website
-    driver.get("https://www.ilovepdf2.com/")
+    driver.get(url)
 
     # Get the size of the page
     s = driver.get_window_size()
@@ -44,9 +44,9 @@ def capture_screenshot(view_type):
     driver.quit()
 
     # Convert screenshot to PDF
-    png_to_pdf([output_filename], output_filename.replace(".png", ".pdf"))
+    html_to_pdf([output_filename], output_filename.replace(".png", ".pdf"))
 
-def png_to_pdf(png_files, pdf_output, orientation='portrait', page_size='fit', margin='no_margin'):
+def html_to_pdf(png_files, pdf_output, orientation='portrait', page_size='fit', margin='no_margin'):
     for png_file in png_files:
         img = Image.open(png_file)
         img_width, img_height = img.size
@@ -97,6 +97,8 @@ def png_to_pdf(png_files, pdf_output, orientation='portrait', page_size='fit', m
         c.showPage()
         c.save()
 
+url=input("Enter url here: ")
 # Main program
 user_choice = int(input("Enter 1 for mobile view or 2 for desktop view: "))
-capture_screenshot(user_choice)
+output_filename_forPDF=input("Enter output file name: ")
+capture_screenshot(user_choice,url,output_filename_forPDF)
